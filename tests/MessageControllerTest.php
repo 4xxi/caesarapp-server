@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Tests;
+
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+class MessageControllerTest extends WebTestCase
+{
+
+    /**
+     * It just works...
+     */
+    public function testStatusGetMessages()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/messages');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $response = (array)json_decode($client->getResponse()->getContent());
+
+        $this->assertSame('OK', $response['status']);
+    }
+
+    /**
+     * Test cases:
+     * 1. Empty POST request to /messages. Should trigger 3 errors.
+     * 2. Not-full POST request. Should trigger a proper error.
+     */
+    public function testNewMessageFail()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/messages');
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('errors', $response);
+
+        $this->assertArrayHasKey('message', $response['errors']);
+        $this->assertArrayHasKey('secondsLimit', $response['errors']);
+        $this->assertArrayHasKey('requestsLimit', $response['errors']);
+
+        $client->request('POST', '/messages', [
+            'message' => [
+                'message' => 'text',
+                'requestsLimit' => 1,
+            ]
+        ]);
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('errors', $response);
+        $this->assertArrayHasKey('secondsLimit', $response['errors']);
+    }
+
+    /**
+     * Should create a new message with unique ID.
+     */
+    public function testNewMessageSuccess()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/messages', [
+            'message' => [
+                'message' => 'text',
+                'secondsLimit' => 10,
+                'requestsLimit' => 5,
+            ]
+        ]);
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayNotHasKey('error', $response);
+        $this->assertArrayHasKey('id', $response);
+        $this->assertArrayHasKey('message', $response);
+        $this->assertArrayHasKey('secondsLimit', $response);
+        $this->assertArrayHasKey('requestsLimit', $response);
+        $this->assertArrayHasKey('expires', $response);
+
+        $this->assertEquals('text', $response['message']);
+        $this->assertEquals(10, $response['secondsLimit']);
+        $this->assertNotNull($response['id']);
+    }
+
+    /**
+     * Should create a new message with unique ID and check GET request.
+     */
+    public function testCreateAndGet()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/messages', [
+            'message' => [
+                'message' => 'text',
+                'secondsLimit' => 100,
+                'requestsLimit' => 5,
+            ]
+        ]);
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $id = $response['id'];
+
+        $client->request('GET', '/messages/'.$id);
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayNotHasKey('error', $response);
+        $this->assertArrayHasKey('id', $response);
+        $this->assertArrayHasKey('message', $response);
+        $this->assertArrayHasKey('secondsLimit', $response);
+        $this->assertArrayHasKey('requestsLimit', $response);
+        $this->assertArrayHasKey('expires', $response);
+    }
+
+    /**
+     * Should create a new message with unique ID and check GET request.
+     */
+    public function testExpiration()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/messages', [
+            'message' => [
+                'message' => 'text',
+                'secondsLimit' => 1,
+                'requestsLimit' => 5,
+            ]
+        ]);
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $id = $response['id'];
+
+        sleep(1);
+
+        $client->request('GET', '/messages/'.$id);
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('errors', $response);
+    }
+
+}

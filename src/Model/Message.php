@@ -12,7 +12,7 @@ class Message
 {
 
     /**
-     * @var integer
+     * @var string
      * @Groups({"read"})
      */
     private $id;
@@ -134,7 +134,7 @@ class Message
     public function setSecondsLimit($secondsLimit)
     {
         $this->secondsLimit = $secondsLimit;
-        $this->setExpires(strtotime("now +{$secondsLimit} seconds"));
+        $this->setExpires(new \DateTime("now +{$secondsLimit} seconds"));
 
         return $this;
     }

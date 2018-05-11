@@ -13,7 +13,7 @@ class MessageControllerTest extends WebTestCase
     public function testStatusGetMessages()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/messages');
+        $crawler = $client->request('GET', '/api/messages');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $response = (array)json_decode($client->getResponse()->getContent());
@@ -23,13 +23,13 @@ class MessageControllerTest extends WebTestCase
 
     /**
      * Test cases:
-     * 1. Empty POST request to /messages. Should trigger 3 errors.
+     * 1. Empty POST request to /api/messages. Should trigger 3 errors.
      * 2. Not-full POST request. Should trigger a proper error.
      */
     public function testNewMessageFail()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/messages');
+        $crawler = $client->request('POST', '/api/messages');
 
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('errors', $response);
@@ -38,7 +38,7 @@ class MessageControllerTest extends WebTestCase
         $this->assertArrayHasKey('secondsLimit', $response['errors']);
         $this->assertArrayHasKey('requestsLimit', $response['errors']);
 
-        $client->request('POST', '/messages', [
+        $client->request('POST', '/api/messages', [
             'message' => [
                 'message' => 'text',
                 'requestsLimit' => 1,
@@ -56,7 +56,7 @@ class MessageControllerTest extends WebTestCase
     public function testNewMessageSuccess()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/messages', [
+        $crawler = $client->request('POST', '/api/messages', [
             'message' => [
                 'message' => 'text',
                 'secondsLimit' => 10,
@@ -83,7 +83,7 @@ class MessageControllerTest extends WebTestCase
     public function testCreateAndGet()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/messages', [
+        $crawler = $client->request('POST', '/api/messages', [
             'message' => [
                 'message' => 'text',
                 'secondsLimit' => 100,
@@ -94,9 +94,9 @@ class MessageControllerTest extends WebTestCase
         $response = json_decode($client->getResponse()->getContent(), true);
         $id = $response['id'];
 
-        $client->request('GET', '/messages/'.$id);
+        $client->request('GET', '/api/messages/'.$id);
         $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertArrayNotHasKey('error', $response);
+        $this->assertArrayNotHasKey('errors', $response);
         $this->assertArrayHasKey('id', $response);
         $this->assertArrayHasKey('message', $response);
         $this->assertArrayHasKey('secondsLimit', $response);
@@ -110,7 +110,7 @@ class MessageControllerTest extends WebTestCase
     public function testExpiration()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/messages', [
+        $crawler = $client->request('POST', '/api/messages', [
             'message' => [
                 'message' => 'text',
                 'secondsLimit' => 1,
@@ -123,7 +123,7 @@ class MessageControllerTest extends WebTestCase
 
         sleep(1);
 
-        $client->request('GET', '/messages/'.$id);
+        $client->request('GET', '/api/messages/'.$id);
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('errors', $response);
     }

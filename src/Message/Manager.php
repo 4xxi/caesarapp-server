@@ -9,6 +9,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 class Manager
 {
 
+    const PREFIX = 'messages';
+
     /**
      * @var Client
      */
@@ -31,8 +33,8 @@ class Manager
     {
         $id = bin2hex(random_bytes(20));
         $message->setId($id);
-        $this->redis->set('message:'.$message->getId(), $this->serialize($message));
-        $this->redis->expire('message:'.$message->getId(), $message->getSecondsLimit());
+        $this->redis->set($this::PREFIX.':'.$message->getId(), $this->serialize($message));
+        $this->redis->expire($this::PREFIX.':'.$message->getId(), $message->getSecondsLimit());
 
         return $message;
     }
@@ -43,7 +45,7 @@ class Manager
      */
     public function get($id)
     {
-        $json = $this->redis->get('message:'.$id);
+        $json = $this->redis->get($this::PREFIX.':'.$id);
         if (is_null($json)) {
             return null;
         }
@@ -51,7 +53,7 @@ class Manager
         $message = $this->deserialize($json);
         return $message;
     }
-    
+
     /**
      * @param Message $message
      * @return string

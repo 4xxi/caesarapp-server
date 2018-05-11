@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Model\Message;
 use App\Form\Type\MessageType;
 
+/**
+ * @Route("/api")
+ */
 class MessageController extends Controller
 {
 
@@ -24,6 +27,20 @@ class MessageController extends Controller
     public function __construct(\App\Message\Manager $manager)
     {
         $this->manager = $manager;
+    }
+
+    /**
+     * @Route("/messages/{id}", name="messages_get")
+     * @Method({"GET"})
+     */
+    public function show($id)
+    {
+        $message = $this->manager->get($id);
+        if ($message) {
+            return new Response($this->manager->serialize($message));
+        }
+
+        return new JsonResponse(['errors' => ['id' => 'Message not found']]);
     }
 
     /**
@@ -59,18 +76,6 @@ class MessageController extends Controller
         return new JsonResponse(['status' => 'OK']);
     }
 
-    /**
-     * @Route("/messages/{id}", name="messages_get")
-     * @Method({"GET"})
-     */
-    public function show($id)
-    {
-        $message = $this->manager->get($id);
-        if ($message) {
-            return new Response($this->manager->serialize($message));
-        }
 
-        return new JsonResponse(['errors' => ['id' => 'Message not found']]);
-    }
 
 }

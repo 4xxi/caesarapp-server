@@ -10,6 +10,7 @@ class Manager
 {
 
     const PREFIX = 'messages';
+    const LIMIT_PREFIX = 'limits';
 
     /**
      * @var Client
@@ -33,8 +34,13 @@ class Manager
     {
         $id = bin2hex(random_bytes(20));
         $message->setId($id);
-        $this->redis->set($this::PREFIX.':'.$message->getId(), $this->serialize($message));
-        $this->redis->expire($this::PREFIX.':'.$message->getId(), $message->getSecondsLimit());
+
+        $redisId = $this->buildRedisId($message->getId());
+        $limitId = $this->buildLimitId($message->getId());
+        $this->redis->set($redisId, $this->serialize($message));
+        $this->redis->expire($redisId, $message->getSecondsLimit());
+        $this->redis->set($limitId, $message->getRequestsLimit());
+        $this->redis->expire($limitId, $message->getSecondsLimit());
 
         return $message;
     }
@@ -45,13 +51,63 @@ class Manager
      */
     public function get($id)
     {
-        $json = $this->redis->get($this::PREFIX.':'.$id);
+        $json = $this->redis->get($this->buildRedisId($id));
         if (is_null($json)) {
             return null;
         }
 
         $message = $this->deserialize($json);
+
+        $this->decreaseLimit($message);
+        $this->deleteIfLastAttempt($message);
+
         return $message;
+    }
+
+    /**
+     * @param Message $message
+     * @return int
+     */
+    protected function decreaseLimit(Message $message)
+    {
+        $res = $this->redis->decr($this->buildLimitId($message->getId()));
+        return $res;
+    }
+
+    /**
+     * Returns true if it is last attempt (based on requestsLimit), false - in opposite case.
+     * @param Message $message
+     * @return bool
+     */
+    protected function deleteIfLastAttempt(Message $message)
+    {
+        $limit = (int)$this->redis->get($this->buildLimitId($message->getId()));
+
+        if (0 === $limit) {
+            $this->redis->del($this->buildRedisId($message->getId()));
+            $this->redis->del($this->buildLimitId($message->getId()));
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @var string $id
+     * @return string
+     */
+    public function buildRedisId($id)
+    {
+        return $this::PREFIX.':'.$id;
+    }
+
+    /**
+     * @var string $id
+     * @return string
+     */
+    public function buildLimitId($id)
+    {
+        return $this::LIMIT_PREFIX.':'.$id;
     }
 
     /**

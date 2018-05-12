@@ -10,7 +10,7 @@ class MessageControllerTest extends WebTestCase
     /**
      * It just works...
      */
-    public function testStatusGetMessages()
+    public function testStatus()
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/api/messages');
@@ -73,6 +73,7 @@ class MessageControllerTest extends WebTestCase
         $this->assertArrayHasKey('expires', $response);
 
         $this->assertEquals('text', $response['message']);
+        $this->assertEquals(5, $response['requestsLimit']);
         $this->assertEquals(10, $response['secondsLimit']);
         $this->assertNotNull($response['id']);
     }
@@ -105,9 +106,9 @@ class MessageControllerTest extends WebTestCase
     }
 
     /**
-     * Should create a new message with unique ID and check GET request.
+     * Test that the messages are expired automatically based on secondsLimit parameter
      */
-    public function testExpiration()
+    public function testSecondsLimit()
     {
         $client = static::createClient();
         $crawler = $client->request('POST', '/api/messages', [
@@ -126,6 +127,38 @@ class MessageControllerTest extends WebTestCase
         $client->request('GET', '/api/messages/'.$id);
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('errors', $response);
+    }
+
+    public function testRequestsLimit()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/messages', [
+            'message' => [
+                'message' => 'text',
+                'secondsLimit' => 100,
+                'requestsLimit' => 2,
+            ]
+        ]);
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $id = $response['id'];
+
+        /**
+         * After second try it still should work.
+         */
+        $client->request('GET', '/api/messages/'.$id);
+        $client->request('GET', '/api/messages/'.$id);
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayNotHasKey('errors', $response);
+        $this->assertArrayHasKey('id', $response);
+
+        /**
+         * Should not work on 3rd try
+         */
+        $client->request('GET', '/api/messages/'.$id);
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('errors', $response);
+
     }
 
 }

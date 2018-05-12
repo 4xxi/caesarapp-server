@@ -76,6 +76,4 @@ class MessageController extends Controller
         return new JsonResponse(['status' => 'OK']);
     }
 
-
-
 }

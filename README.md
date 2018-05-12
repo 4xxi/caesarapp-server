@@ -63,6 +63,10 @@ The app stores each message in redis. `Message` has the following fields:
 
 ### API calls
 
+#### Base URL
+
+Base URL for the API is `yourdomain.org/api`. All endpoints have prefix `/api`.
+
 #### Error format
 
 If any error appears the response body would automatically get an element with key `errors`. This element has an array with the keys equal to the fields that have caused the error. Each field is also an array of string variables representing errors in text format.

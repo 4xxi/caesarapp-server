@@ -13,9 +13,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Model\Message;
 use App\Form\Type\MessageType;
 
-/**
- * @Route("/api")
- */
 class MessageController extends Controller
 {
 
@@ -30,7 +27,7 @@ class MessageController extends Controller
     }
 
     /**
-     * @Route("/messages/{id}", name="messages_get")
+     * @Route("/api/messages/{id}", name="messages_get")
      * @Method({"GET"})
      */
     public function show($id)
@@ -44,8 +41,8 @@ class MessageController extends Controller
     }
 
     /**
-     * @Route("/messages", name="messages_create")
-     * @Route("/messages/", name="messages_create_with_slash")
+     * @Route("/api/messages", name="messages_create")
+     * @Route("/api/messages/", name="messages_create_with_slash")
      * @Method({"POST"})
      */
     public function create(Request $request)
@@ -69,8 +66,9 @@ class MessageController extends Controller
     }
 
     /**
-     * @Route("/messages", name="messages_status")
-     * @Route("/messages/", name="messages_status_with_slash")
+     * @Route("/api/messages", name="messages_status")
+     * @Route("/api/messages/", name="messages_status_with_slash")
+     * @Route("/", name="homepage")
      * @Method({"GET"})
      */
     public function status()

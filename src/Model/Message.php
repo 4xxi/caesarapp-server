@@ -134,6 +134,12 @@ class Message
     public function setSecondsLimit($secondsLimit)
     {
         $this->secondsLimit = $secondsLimit;
+        /**
+         * Hack for the form binding
+         */
+        if (is_null($secondsLimit)) {
+            return $this;
+        }
         $this->setExpires(new \DateTime("now +{$secondsLimit} seconds"));
 
         return $this;

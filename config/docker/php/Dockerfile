@@ -1,11 +1,21 @@
-FROM 4xxi/php-pgsql:flex
+FROM php:7.2.2-fpm-alpine3.7
 
-# To add additional packages and php extensions uncomment the following lines and add required dependencies
-# Check https://hub.docker.com/_/php/ for examples and documentation
+RUN apk upgrade --update && apk add \
+libc-dev \
+zlib-dev \
+icu-dev \
+autoconf \
+gcc \
+make
 
-#RUN apt-get update && apt-get install -y \
-#    lib_name_1 \
-#    lib_name_2 \
-#    && docker-php-ext-install \
-#    ext_name_1 \
-#    ext_name_2
+RUN docker-php-ext-install \
+    intl \
+    opcache
+
+# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
+ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# install redis ext
+RUN pecl install redis \
+    && docker-php-ext-enable redis

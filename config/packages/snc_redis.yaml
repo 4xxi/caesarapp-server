@@ -1,7 +1,9 @@
+parameters:
+    env(REDIS_URL): 'redis://localhost:6379'
+
 snc_redis:
     clients:
         default:
             type: predis
             alias: default
-            dsn: redis://localhost
-            
+            dsn: '%env(REDIS_URL)%'

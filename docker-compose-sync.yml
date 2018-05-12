@@ -5,8 +5,8 @@ services:
         volumes:
             - ./composer.json:/var/www/html/composer.json
             - ./composer.lock:/var/www/html/composer.lock
-            - project_name-data-sync:/var/www/html:nocopy       # Replace project_name with the name of your project
+            - caesarapp-data-sync:/var/www/html:nocopy
 
 volumes:
-    project_name-data-sync:                                     # Replace project_name with the name of your project
+    caesarapp-data-sync:                                     
         external: true

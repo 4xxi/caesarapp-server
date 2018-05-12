@@ -4,27 +4,23 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-class ContainerAwareTest extends TestCase
+abstract class ContainerAwareTest extends TestCase
 {
 
     /**
      * @var App\Kernel
      */
-    protected $kernel;
+    protected static $kernel;
     /**
      * @var Symfony\Component\DependencyInjection\ContainerInterface
      */
-    protected $container;
+    protected static $container;
 
-    public function __construct()
+    public static function setUpBeforeClass()
     {
-        $this->kernel = new \App\Kernel('test', true);
-        $this->kernel->boot();
-        $this->container = $this->kernel->getContainer();
-
-        $this->errorView = $this->get('App\Form\ErrorView');
-
-        parent::__construct();
+        self::$kernel = new \App\Kernel('test', true);
+        self::$kernel->boot();
+        self::$container = self::$kernel->getContainer();
     }
 
     /**
@@ -34,7 +30,7 @@ class ContainerAwareTest extends TestCase
      */
     public function get($serviceId)
     {
-        return $this->container->get($serviceId);
+        return self::$container->get($serviceId);
     }
 
 }

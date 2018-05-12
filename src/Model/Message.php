@@ -50,6 +50,19 @@ class Message
     private $requestsLimit;
 
     /**
+     * @return $this
+     */
+    public function setupExpiration()
+    {
+        $secondsLimit = $this->secondsLimit;
+        if (is_null($secondsLimit)) {
+            return $this;
+        }
+        $this->setExpires(new \DateTime("now +{$secondsLimit} seconds"));
+        return $this;
+    }
+
+    /**
      * @return string $id
      */
     public function getId()
@@ -91,7 +104,11 @@ class Message
      */
     public function setExpires($expires)
     {
-        $this->expires = $expires;
+        if ($expires instanceOf \DateTime) {
+            $this->expires = $expires;
+        } elseif (is_string($expires)) {
+            $this->expires = new \DateTime($expires);
+        }
 
         return $this;
     }
@@ -134,14 +151,6 @@ class Message
     public function setSecondsLimit($secondsLimit)
     {
         $this->secondsLimit = $secondsLimit;
-        /**
-         * Hack for the form binding
-         */
-        if (is_null($secondsLimit)) {
-            return $this;
-        }
-        $this->setExpires(new \DateTime("now +{$secondsLimit} seconds"));
-
         return $this;
     }
 
@@ -151,17 +160,6 @@ class Message
     public function getSecondsLimit()
     {
         return $this->secondsLimit;
-    }
-
-    /**
-     * Decrements queriesLimit field
-     *
-     * @return $this
-     */
-    public function requested()
-    {
-        $this->requestsLimit;
-        return $this;
     }
 
 }

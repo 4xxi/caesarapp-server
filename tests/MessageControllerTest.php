@@ -71,6 +71,7 @@ class MessageControllerTest extends WebTestCase
         $this->assertArrayHasKey('secondsLimit', $response);
         $this->assertArrayHasKey('requestsLimit', $response);
         $this->assertArrayHasKey('expires', $response);
+        $this->assertNotNull($response['expires']);
 
         $this->assertEquals('text', $response['message']);
         $this->assertEquals(5, $response['requestsLimit']);

@@ -45,6 +45,7 @@ class MessageController extends Controller
 
     /**
      * @Route("/messages", name="messages_create")
+     * @Route("/messages/", name="messages_create_with_slash")
      * @Method({"POST"})
      */
     public function create(Request $request)
@@ -69,6 +70,7 @@ class MessageController extends Controller
 
     /**
      * @Route("/messages", name="messages_status")
+     * @Route("/messages/", name="messages_status_with_slash")
      * @Method({"GET"})
      */
     public function status()

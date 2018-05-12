@@ -5,6 +5,7 @@ namespace App\Message;
 use App\Model\Message;
 use \Predis\Client;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
 class Manager
 {
@@ -34,6 +35,7 @@ class Manager
     {
         $id = bin2hex(random_bytes(20));
         $message->setId($id);
+        $message->setupExpiration();
 
         $redisId = $this->buildRedisId($message->getId());
         $limitId = $this->buildLimitId($message->getId());

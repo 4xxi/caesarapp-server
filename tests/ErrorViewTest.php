@@ -2,10 +2,6 @@
 
 namespace App\Tests;
 
-use PHPUnit\Framework\TestCase;
-
-use App\Form\ErrorView;
-
 use App\Model\Message;
 use App\Form\Type\MessageType;
 
@@ -21,22 +17,31 @@ class ErrorViewTest extends ContainerAwareTest
         'requestsLimit' => 5,
     ];
 
+    /**
+     * @var Message
+     */
     protected $message;
+    /**
+     * @var \Symfony\Component\Form\Form
+     */
     protected $form;
-
+    /**
+     * @var \App\Form\ErrorView
+     */
     protected $errorView;
 
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
-
-        $this->message = new Message();
-        $this->errorView = $this->get('App\Form\ErrorView');
+        $this->errorView = self::$container->get('App\Form\ErrorView');
     }
 
+    /**
+     * @var array $data
+     * @return \Symfony\Component\Form\Form
+     */
     public function buildForm($data)
     {
-        $form = $this->container->get('form.factory')->create(MessageType::class, $this->message);
+        $form = self::$container->get('form.factory')->create(MessageType::class, $this->message);
         $form->submit($data);
         return $form;
     }

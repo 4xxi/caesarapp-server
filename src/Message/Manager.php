@@ -3,24 +3,22 @@
 namespace App\Message;
 
 use App\Model\Message;
-use \Predis\Client;
+use Predis\Client;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
 class Manager
 {
-
-    const PREFIX = 'messages';
-    const LIMIT_PREFIX = 'limits';
+    public const PREFIX = 'messages';
+    public const LIMIT_PREFIX = 'limits';
 
     /**
      * @var Client
      */
     protected $redis;
-    /**
-     * @var SerializerInterface $serializer
-     */
 
+    /**
+     * @var SerializerInterface
+     */
     public function __construct(Client $redis, SerializerInterface $serializer)
     {
         $this->redis = $redis;
@@ -29,6 +27,7 @@ class Manager
 
     /**
      * @param Message $message
+     *
      * @return Message
      */
     public function create(Message $message)
@@ -49,6 +48,7 @@ class Manager
 
     /**
      * @param string $id
+     *
      * @return Message|null
      */
     public function get($id)
@@ -68,26 +68,31 @@ class Manager
 
     /**
      * @param Message $message
+     *
      * @return int
      */
     protected function decreaseLimit(Message $message)
     {
         $res = $this->redis->decr($this->buildLimitId($message->getId()));
+
         return $res;
     }
 
     /**
      * Returns true if it is last attempt (based on requestsLimit), false - in opposite case.
+     *
      * @param Message $message
+     *
      * @return bool
      */
     protected function deleteIfLastAttempt(Message $message)
     {
-        $limit = (int)$this->redis->get($this->buildLimitId($message->getId()));
+        $limit = (int) $this->redis->get($this->buildLimitId($message->getId()));
 
         if (0 === $limit) {
             $this->redis->del($this->buildRedisId($message->getId()));
             $this->redis->del($this->buildLimitId($message->getId()));
+
             return true;
         }
 
@@ -95,7 +100,8 @@ class Manager
     }
 
     /**
-     * @var string $id
+     * @var string
+     *
      * @return string
      */
     public function buildRedisId($id)
@@ -104,7 +110,8 @@ class Manager
     }
 
     /**
-     * @var string $id
+     * @var string
+     *
      * @return string
      */
     public function buildLimitId($id)
@@ -114,6 +121,7 @@ class Manager
 
     /**
      * @param Message $message
+     *
      * @return string
      */
     public function serialize(Message $message)
@@ -123,12 +131,11 @@ class Manager
 
     /**
      * @param string $data
+     *
      * @return Message
      */
     public function deserialize($data)
     {
         return $this->serializer->deserialize($data, Message::class, 'json');
     }
-
-
 }

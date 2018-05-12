@@ -2,13 +2,13 @@
 
 namespace App\Form;
 
-use \Symfony\Component\Form\Form;
+use Symfony\Component\Form\Form;
 
 class ErrorView
 {
-
     /**
      * @param Form $form
+     *
      * @return array
      */
     public function getFormErrorsAsArray(Form $form)
@@ -28,5 +28,4 @@ class ErrorView
 
         return $errors;
     }
-
 }

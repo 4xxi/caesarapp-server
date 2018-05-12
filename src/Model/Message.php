@@ -6,11 +6,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Message
+ * Message.
  */
 class Message
 {
-
     /**
      * @var string
      * @Groups({"read"})
@@ -19,7 +18,7 @@ class Message
 
     /**
      * @var string
-     * @Assert\NotBlank()
+     * @Assert\NotBlank
      * @Assert\Type("string")
      * @Groups({"read", "write"})
      */
@@ -31,20 +30,20 @@ class Message
     private $expires;
 
     /**
-     * @var integer
+     * @var int
      *
-     * @Assert\NotBlank()
+     * @Assert\NotBlank
      * @Assert\Type("int")
      * @Groups({"write"})
      */
     private $secondsLimit;
 
     /**
-     * @var integer
+     * @var int
      *
      * @Assert\Type("int")
      * @Assert\GreaterThan(0)
-     * @Assert\NotBlank()
+     * @Assert\NotBlank
      * @Groups({"write"})
      */
     private $requestsLimit;
@@ -59,6 +58,7 @@ class Message
             return $this;
         }
         $this->setExpires(new \DateTime("now +{$secondsLimit} seconds"));
+
         return $this;
     }
 
@@ -76,11 +76,13 @@ class Message
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
     /**
      * @param string $message
+     *
      * @return $this
      */
     public function setMessage($message)
@@ -100,11 +102,12 @@ class Message
 
     /**
      * @param \DateTime $expires
+     *
      * @return $this
      */
     public function setExpires($expires)
     {
-        if ($expires instanceOf \DateTime) {
+        if ($expires instanceof \DateTime) {
             $this->expires = $expires;
         } elseif (is_string($expires)) {
             $this->expires = new \DateTime($expires);
@@ -123,6 +126,7 @@ class Message
 
     /**
      * @param int $requestsLimit
+     *
      * @return $this
      */
     public function setRequestsLimit($requestsLimit)
@@ -146,11 +150,13 @@ class Message
 
     /**
      * @param int $secondsLimit
+     *
      * @return $this
      */
     public function setSecondsLimit($secondsLimit)
     {
         $this->secondsLimit = $secondsLimit;
+
         return $this;
     }
 
@@ -161,5 +167,4 @@ class Message
     {
         return $this->secondsLimit;
     }
-
 }

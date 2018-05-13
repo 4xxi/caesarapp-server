@@ -17,4 +17,7 @@ script:
   - docker-compose build
   - docker-compose up -d
   - docker-compose ps
+  - docker-compose exec php ls
+  - docker-compose exec php ls vendor
+  - docker-compose exec php php bin/console
   - docker-compose exec php php vendor/bin/simple-phpunit

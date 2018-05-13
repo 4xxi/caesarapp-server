@@ -17,5 +17,5 @@ script:
   - docker-compose build
   - docker-compose up -d
   - docker-compose ps
-  - docker-compose exec php composer install --dev --prefer-dist --no-progress --no-suggest --no-interaction
-  - docker-compose exec php php vendor/bin/simple-phpunit
+  - docker-compose exec php composer install --prefer-dist --no-progress --no-suggest --no-interaction
+  - docker-compose exec php php bin/phpunit

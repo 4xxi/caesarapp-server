@@ -71,7 +71,9 @@ class Message
     }
 
     /**
-     * @return string $id
+     * @param string $id
+     *
+     * @return $this
      */
     public function setId($id)
     {

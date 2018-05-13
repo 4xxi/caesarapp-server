@@ -17,5 +17,4 @@ script:
   - docker-compose build
   - docker-compose up -d
   - docker-compose ps
-  - docker-compose exec caesarapp-server_php_1 bin/phpunit
-  - docker-compose exec caesarapp-server_php_1 vendor/bin/php-cs-fixer fix
+  - docker-compose exec php php vendor/bin/simple-phpunit

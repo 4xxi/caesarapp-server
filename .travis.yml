@@ -19,5 +19,6 @@ script:
   - docker-compose ps
   - docker-compose exec php ls
   - docker-compose exec php ls vendor
+  - docker-compose exec php composer install
   - docker-compose exec php php bin/console
   - docker-compose exec php php vendor/bin/simple-phpunit

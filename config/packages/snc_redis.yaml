@@ -1,5 +1,5 @@
 parameters:
-    env(REDIS_URL): 'redis://localhost:6379'
+    env(REDIS_URL): 'redis://redis:6379'
 
 snc_redis:
     clients:

@@ -6,11 +6,13 @@ zlib-dev \
 icu-dev \
 autoconf \
 gcc \
+git \
 make
 
 RUN docker-php-ext-install \
     intl \
-    opcache
+    opcache \
+    zip
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 ENV COMPOSER_ALLOW_SUPERUSER 1

@@ -6,6 +6,7 @@ zlib-dev \
 icu-dev \
 autoconf \
 gcc \
+git \
 make
 
 RUN docker-php-ext-install \

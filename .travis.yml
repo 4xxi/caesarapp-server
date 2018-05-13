@@ -17,5 +17,7 @@ script:
   - docker-compose build
   - docker-compose up -d
   - docker-compose ps
+  - docker-compose exec php rm -Rf vendor
   - docker-compose exec php composer install --prefer-dist --no-progress --no-suggest --no-interaction
   - docker-compose exec php php bin/phpunit
+  - docker-compose exec php ./vendor/bin/security-checker security:check

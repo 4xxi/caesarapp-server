@@ -15,7 +15,8 @@ class MessageControllerTest extends WebTestCase
      */
     protected function sendCreateRequest($client, array $message): Client
     {
-        $client->request('POST', '/api/messages', ['message' => $message]);
+        $json = json_encode($message);
+        $client->request('POST', '/api/messages', [], [], [], $json);
         return $client;
     }
 

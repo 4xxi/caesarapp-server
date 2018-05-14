@@ -48,7 +48,8 @@ class MessageController extends Controller
         $form = $this->createForm(MessageType::class, $message);
 
         if ($request->isMethod('POST')) {
-            $form->submit($request->request->get($form->getName()));
+            $messageArray = json_decode($request->getContent(), true);
+            $form->submit($messageArray);
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $message = $form->getData();
@@ -59,7 +60,6 @@ class MessageController extends Controller
         }
 
         $errors = $this->get('App\Form\ErrorView')->getFormErrorsAsArray($form);
-
         return new JsonResponse(['errors' => $errors], 400);
     }
 

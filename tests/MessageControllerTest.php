@@ -32,6 +32,7 @@ class MessageControllerTest extends WebTestCase
         $crawler = $client->request('POST', '/api/messages');
 
         $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertSame(400, $client->getResponse()->getStatusCode());
         $this->assertArrayHasKey('errors', $response);
 
         $this->assertArrayHasKey('message', $response['errors']);
@@ -127,6 +128,7 @@ class MessageControllerTest extends WebTestCase
 
         $client->request('GET', '/api/messages/'.$id);
         $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertSame(404, $client->getResponse()->getStatusCode());
         $this->assertArrayHasKey('errors', $response);
     }
 
@@ -157,6 +159,7 @@ class MessageControllerTest extends WebTestCase
          * Should not work on 3rd try
          */
         $client->request('GET', '/api/messages/'.$id);
+        $this->assertSame(404, $client->getResponse()->getStatusCode());
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('errors', $response);
 

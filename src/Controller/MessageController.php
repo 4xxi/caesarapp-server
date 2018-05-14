@@ -34,7 +34,7 @@ class MessageController extends Controller
             return new Response($this->manager->serialize($message));
         }
 
-        return new JsonResponse(['errors' => ['id' => 'Message not found']]);
+        return new JsonResponse(['errors' => ['id' => 'Message not found']], 404);
     }
 
     /**
@@ -60,7 +60,7 @@ class MessageController extends Controller
 
         $errors = $this->get('App\Form\ErrorView')->getFormErrorsAsArray($form);
 
-        return new JsonResponse(['errors' => $errors]);
+        return new JsonResponse(['errors' => $errors], 400);
     }
 
     /**

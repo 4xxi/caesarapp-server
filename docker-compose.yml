@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
     php:
-        build: ./config/docker/php
+        image: 4xxi/php-redis:php-7.2.2-fpm-alpine3.7
         depends_on:
             - redis
         volumes:
@@ -12,6 +12,8 @@ services:
         entrypoint: ./config/docker/docker-entrypoint.sh
         environment:
           - REDIS_URL
+        networks: 
+            - backend  
     nginx:
         image: 4xxi/nginx:flex
         depends_on:
@@ -21,6 +23,8 @@ services:
         volumes:
             - .:/var/www/html
             - ./var/log:/var/log/nginx
+        networks: 
+            - backend      
     redis:
         image: 'redis:alpine'
         environment:
@@ -31,9 +35,13 @@ services:
         # labels:
         #   kompose.service.type: nodeport
         ports:
-          - '6379:6379'
+          - '${REDIS_PORT}:6379'
+        networks: 
+          - backend    
         volumes:
           - 'redis:/caesarapp/redis'
+networks: 
+    backend:
+
 volumes:
     redis:
-        driver: local

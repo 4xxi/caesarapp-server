@@ -3,9 +3,21 @@
 namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Client;
 
 class MessageControllerTest extends WebTestCase
 {
+
+    /**
+     * @param Client $client
+     * @param array $message
+     * @return Client
+     */
+    protected function sendCreateRequest($client, array $message): Client
+    {
+        $client->request('POST', '/api/messages', ['message' => $message]);
+        return $client;
+    }
 
     /**
      * It just works...
@@ -39,16 +51,17 @@ class MessageControllerTest extends WebTestCase
         $this->assertArrayHasKey('secondsLimit', $response['errors']);
         $this->assertArrayHasKey('requestsLimit', $response['errors']);
 
-        $client->request('POST', '/api/messages', [
-            'message' => [
-                'message' => 'text',
-                'requestsLimit' => 1,
-            ]
+        $client = $this->sendCreateRequest($client,
+        [
+            'message' => 'text',
+            'requestsLimit' => 1,
         ]);
 
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('errors', $response);
         $this->assertArrayHasKey('secondsLimit', $response['errors']);
+        $this->assertArrayNotHasKey('requestsLimit', $response['errors']);
+        $this->assertArrayNotHasKey('message', $response['errors']);
     }
 
     /**
@@ -57,12 +70,12 @@ class MessageControllerTest extends WebTestCase
     public function testNewMessageSuccess()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/messages', [
-            'message' => [
+
+        $client = $this->sendCreateRequest($client,
+        [
                 'message' => 'text',
                 'secondsLimit' => 10,
                 'requestsLimit' => 5,
-            ]
         ]);
 
         $response = json_decode($client->getResponse()->getContent(), true);
@@ -86,12 +99,10 @@ class MessageControllerTest extends WebTestCase
     public function testCreateAndGet()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/messages', [
-            'message' => [
-                'message' => 'text',
-                'secondsLimit' => 100,
-                'requestsLimit' => 5,
-            ]
+        $client = $this->sendCreateRequest($client, [
+            'message' => 'text',
+            'secondsLimit' => 100,
+            'requestsLimit' => 5,
         ]);
 
         $response = json_decode($client->getResponse()->getContent(), true);
@@ -113,12 +124,10 @@ class MessageControllerTest extends WebTestCase
     public function testSecondsLimit()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/messages', [
-            'message' => [
-                'message' => 'text',
-                'secondsLimit' => 1,
-                'requestsLimit' => 5,
-            ]
+        $client = $this->sendCreateRequest($client, [
+            'message' => 'text',
+            'secondsLimit' => 1,
+            'requestsLimit' => 5,
         ]);
 
         $response = json_decode($client->getResponse()->getContent(), true);
@@ -135,12 +144,10 @@ class MessageControllerTest extends WebTestCase
     public function testRequestsLimit()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/messages', [
-            'message' => [
-                'message' => 'text',
-                'secondsLimit' => 100,
-                'requestsLimit' => 2,
-            ]
+        $client = $this->sendCreateRequest($client, [
+            'message' => 'text',
+            'secondsLimit' => 100,
+            'requestsLimit' => 2,
         ]);
 
         $response = json_decode($client->getResponse()->getContent(), true);

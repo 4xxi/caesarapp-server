@@ -1,7 +1,9 @@
 version: "2"
 
 options:
-    compose-dev-file-path: 'docker-compose-sync.yml'
+    compose-dev-file-path: 
+        - 'docker-compose-dev.yml'
+        - 'docker-compose-sync.yml'
 syncs:
     caesarapp-data-sync:                                    
         src: './'

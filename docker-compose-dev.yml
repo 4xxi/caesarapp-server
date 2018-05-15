@@ -1,0 +1,8 @@
+version: '3.2'
+
+services:
+    php:
+        build: ./config/docker/php
+    redis:
+        environment:
+            - ALLOW_EMPTY_PASSWORD=yes

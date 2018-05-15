@@ -30,7 +30,7 @@ recommended to restart containers after changing these values.
 #### 1. Start Containers and install dependencies
 On Linux:
 ```bash
-docker-compose up -d
+docker-compose -f docker-compose-dev.yml up -d
 ```
 On MacOS:
 ```bash

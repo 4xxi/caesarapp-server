@@ -8,7 +8,4 @@ syncs:
     caesarapp-data-sync:                                    
         src: './'
         host_disk_mount_mode: 'cached'
-        sync_excludes:
-            - '.git'
-            - '.idea'
-            - 'var/cache/*'
+        sync_excludes: ['.git', '.idea', 'var/cache', 'vendor']

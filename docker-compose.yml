@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
     php:
-        build: ./config/docker/php
+        image: 4xxi/php-redis:php-7.2.2-fpm-alpine3.7
         depends_on:
             - redis
         volumes:
@@ -11,7 +11,10 @@ services:
             - "9000"
         entrypoint: ./config/docker/docker-entrypoint.sh
         environment:
-          - REDIS_URL
+          - REDIS_HOST=redis
+          - REDIS_PORT=${REDIS_PORT}
+        networks: 
+            - backend  
     nginx:
         image: 4xxi/nginx:flex
         depends_on:
@@ -21,19 +24,19 @@ services:
         volumes:
             - .:/var/www/html
             - ./var/log:/var/log/nginx
+        networks: 
+            - backend      
     redis:
         image: 'redis:alpine'
         environment:
-          # ALLOW_EMPTY_PASSWORD is recommended only for development.
-          - ALLOW_EMPTY_PASSWORD=yes
-          - REDIS_URL
+          - REDIS_PORT=${REDIS_PORT}
           - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
-        # labels:
-        #   kompose.service.type: nodeport
-        ports:
-          - '6379:6379'
+        networks: 
+          - backend    
         volumes:
-          - 'redis:/caesarapp/redis'
+          - 'redis:/etc/redis/database/caesarapp'
+networks: 
+    backend:
+
 volumes:
     redis:
-        driver: local

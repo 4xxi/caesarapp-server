@@ -9,17 +9,16 @@
         "sensio/framework-extra-bundle": "^5.1",
         "sensiolabs/security-checker": "^4.1",
         "snc/redis-bundle": "^2.1",
-        "symfony/console": "^4.0",
-        "symfony/dotenv": "^4.0",
+        "symfony/console": "^4.1",
+        "symfony/dotenv": "^4.1",
         "symfony/flex": "^1.0",
         "symfony/form": "^4.0",
-        "symfony/framework-bundle": "^4.0",
+        "symfony/framework-bundle": "^4.1",
         "symfony/lts": "^4@dev",
-        "symfony/monolog-bundle": "^3.1",
+        "symfony/monolog-bundle": "^3.3",
         "symfony/serializer-pack": "^1.0",
-        "symfony/twig-bundle": "^4.0",
-        "symfony/validator": "^4.0",
-        "symfony/yaml": "^4.0"
+        "symfony/validator": "^4.1",
+        "symfony/yaml": "^4.1"
     },
     "require-dev": {
         "deployer/deployer": "^6.1",

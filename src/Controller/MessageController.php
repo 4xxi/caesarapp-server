@@ -3,11 +3,11 @@
 namespace App\Controller;
 
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+
 use App\Model\Message;
 use App\Form\Type\MessageType;
 
@@ -24,8 +24,7 @@ class MessageController extends Controller
     }
 
     /**
-     * @Route("/api/messages/{id}", name="messages_get")
-     * @Method({"GET"})
+     * @Route("/api/messages/{id}", name="messages_get", methods={"GET"})
      */
     public function show($id)
     {
@@ -38,9 +37,8 @@ class MessageController extends Controller
     }
 
     /**
-     * @Route("/api/messages", name="messages_create")
-     * @Route("/api/messages/", name="messages_create_with_slash")
-     * @Method({"POST"})
+     * @Route("/api/messages", name="messages_create", methods={"POST"})
+     * @Route("/api/messages/", name="messages_create_with_slash", methods={"POST"})
      */
     public function create(Request $request)
     {
@@ -64,10 +62,9 @@ class MessageController extends Controller
     }
 
     /**
-     * @Route("/api/messages", name="messages_status")
-     * @Route("/api/messages/", name="messages_status_with_slash")
-     * @Route("/", name="homepage")
-     * @Method({"GET"})
+     * @Route("/api/messages", name="messages_status", methods={"GET"})
+     * @Route("/api/messages/", name="messages_status_with_slash", methods={"GET"})
+     * @Route("/", name="homepage", methods={"GET"})
      */
     public function status()
     {
